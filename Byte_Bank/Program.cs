@@ -162,14 +162,15 @@ namespace Bank_Byte
             do
             {
                 Console.Clear();
-                Console.ForegroundColor = ConsoleColor.Red;
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
                 Console.WriteLine("---------------------");
                 Console.WriteLine("||::::Saque:::::||");
                 Console.WriteLine("---------------------");
                 Console.ResetColor();
                 Console.Write("Digite o cpf: ");
+                string cpfSaque = Console.ReadLine();
+                int indexCpf = cpfs.FindIndex(x => x == cpfSaque);
 
-                int indexCpf = cpfs.FindIndex(x => x == Console.ReadLine());
                 if (indexCpf == -1)
                 {
                     Console.WriteLine("CPF não encontrado!");
@@ -177,14 +178,31 @@ namespace Bank_Byte
                 else
                 {
                     Console.Write("Digite a senha: ");
-                    int indexSenha = senha.FindIndex(x => x == Console.ReadLine());
+                    string senhaSaque = Console.ReadLine();
+                    int indexSenha = senha.FindIndex(x => x == senhaSaque);
 
                     if (indexCpf == indexSenha)
                     {
                         Console.Write("Digite o valor do Saque:");
                         double saque = double.Parse(Console.ReadLine());
-                        saques.Insert(indexCpf, saque);
-                        saldos.Insert(indexCpf, depositos[indexCpf] - saque);
+                        saldos[indexCpf] = depositos[indexSenha] - saque;
+                        
+                        if (saldos[indexCpf] <= 0)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine();
+                            Console.WriteLine("Não foi possível realizar a operção!!");
+                            Console.WriteLine("Verifique o saldo.");
+                            Console.ResetColor();
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.WriteLine();
+                            Console.WriteLine("Saque efetuado com sucesso!!!");
+                            Console.ResetColor();
+                        }
+                       
                     }
                     else
                     {
@@ -192,7 +210,8 @@ namespace Bank_Byte
                     }
 
                 }
-                Console.WriteLine("(1) Realizar nova operação || (2) Voltar ao Menu Principal");
+                Console.WriteLine();
+                Console.Write("(1) Realizar nova operação || (2) Voltar ao Menu Principal");
                 int option = int.Parse(Console.ReadLine());
 
                 if (option == 2)
@@ -201,6 +220,79 @@ namespace Bank_Byte
                     return;
                 }
             } while (menuSaque);
+        }
+        static void TransferenciaContas(List<string> cpfs, List<string> senha, List<double> saldos)
+        {
+            bool menu = true;
+            do
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.WriteLine("--------------------------");
+                Console.WriteLine("||::::Transferência:::::||");
+                Console.WriteLine("--------------------------");
+                Console.ResetColor();
+
+                Console.Write("Digite o cpf: ");
+                string cpfConta = Console.ReadLine();
+                int indexCpf = cpfs.FindIndex(x => x == cpfConta);
+
+                if (indexCpf == -1)
+                {
+                    Console.WriteLine("CPF não encontrado!");
+                }
+                else
+                {
+                    Console.Write("Digite a senha: ");
+                    string senhaConta = Console.ReadLine();
+                    int indexSenha = senha.FindIndex(x => x == senhaConta);
+
+                    if (indexCpf == indexSenha)
+                    {
+                        Console.WriteLine("Digite a conta que receberá a transferência: ");
+                        string cpfContaRecebe = Console.ReadLine();
+                        int indexCpfContaRecebe = cpfs.FindIndex(x => x == cpfContaRecebe);
+
+                        if (indexCpfContaRecebe == -1)
+                        {
+                            Console.WriteLine("Conta não encontrada!");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Digite o valor a ser transferido: ");
+                            double valorTransferido = double.Parse(Console.ReadLine());
+
+                            if (saldos[indexCpf] < valorTransferido)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine();
+                                Console.WriteLine("Não foi possível realizar a operção!!");
+                                Console.WriteLine("Verifique o saldo.");
+                                Console.ResetColor();
+                            }
+                            else
+                            {
+                                saldos[indexCpf] -= valorTransferido;
+                                saldos[indexCpfContaRecebe] += valorTransferido;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Senha inválida!!!");
+                    }
+
+                }
+                Console.WriteLine();
+                Console.Write("(1) Realizar nova operação || (2) Voltar ao Menu Principal");
+                int option = int.Parse(Console.ReadLine());
+
+                if (option == 2)
+                {
+                    menu = false;
+                    return;
+                }
+            } while (menu);
         }
         static void MovimentarContas(List<string> cpfs, List<string> senha, List<double> saldos, List<double> depositos, List<double> saques)
         {
@@ -232,6 +324,9 @@ namespace Bank_Byte
                     case 1:
                         SaqueContas(cpfs, senha, depositos, saques, saldos);
                         break;
+                    case 2:
+                        TransferenciaContas(cpfs, senha, saldos);
+                        break;
                     case 3:
                         DepositoContas(cpfs, senha, saldos, depositos, saques);
                         break;
@@ -240,6 +335,8 @@ namespace Bank_Byte
             } while (menuMovimentar != 0);
 
         }
+
+
 
         static void ShowMenu()
         {
