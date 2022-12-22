@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.SymbolStore;
 using System.Net.Mail;
 using System.Net.WebSockets;
 
@@ -6,8 +7,8 @@ namespace Bank_Byte
 {
     class Program
     {
-
-        static void InserirNovoUsuario(List<string> senha, List<string> titulares, List<string> cpfs, List<double> saldos)
+        
+        static void InserirNovoUsuario(List<string> senha, List<string> titulares, List<string> cpfs, List<double> saldos, List<double> depositos)
         {
             int menuNewUser;
             do
@@ -25,6 +26,7 @@ namespace Bank_Byte
                 Console.Write("Digite a senha: ");
                 senha.Add(Console.ReadLine());
                 saldos.Add(0);
+                depositos.Add(0);   
 
                 Console.WriteLine("Escolha uma opção:");
                 Console.WriteLine("(1) - Inserir Novo Usuário || (2) - Voltar ao Menu Principal");
@@ -103,9 +105,9 @@ namespace Bank_Byte
             } while (menuListar != 0);
         }
 
-        static void DepositoContas(List<string> cpfs, List<string> senha, List<double> depositos, List<double> saldos, List<double> saques)
+        static void DepositoContas(List<string> cpfs, List<string> senha, List<double> saldos, List<double> depositos, List<double> saques)
         {
-            bool menuDeposito = true;
+            bool menuDeposito = true; 
             do
             {
                 Console.Clear();
@@ -114,9 +116,10 @@ namespace Bank_Byte
                 Console.WriteLine("||::::Depósito:::::||");
                 Console.WriteLine("---------------------");
                 Console.ResetColor();
-                Console.Write("Digite o cpf: ");
-                //bool cpfDeposito = cpfs.Contains(Console.ReadLine());
-                int indexCpf = cpfs.FindIndex(x => x == Console.ReadLine());
+                Console.Write("Digite o cpf: "); 
+                string cpfDeposito = Console.ReadLine();
+                int indexCpf = cpfs.FindIndex(x => x == cpfDeposito);
+                
                 if (indexCpf == -1)
                 {
                     Console.WriteLine("CPF não encontrado!");
@@ -124,15 +127,17 @@ namespace Bank_Byte
                 else
                 {
                     Console.Write("Digite a senha: ");
-                    //string senhaDeposito = Console.ReadLine();
-                    int indexSenha = senha.FindIndex(x => x == Console.ReadLine());
+                    string senhaDeposito = Console.ReadLine();
+                    int indexSenha = senha.FindIndex(x => x == senhaDeposito);
 
                     if (indexCpf == indexSenha)
                     {
+
                         Console.Write("Digite o valor do Depósito:");
                         double deposito = double.Parse(Console.ReadLine());
-                        depositos.Insert(indexSenha, deposito);
-                        saldos.Insert(indexSenha, deposito);
+
+                        depositos[indexSenha] += deposito;
+                        saldos[indexSenha] += deposito;
                     }
                     else
                     {
@@ -178,8 +183,8 @@ namespace Bank_Byte
                     {
                         Console.Write("Digite o valor do Saque:");
                         double saque = double.Parse(Console.ReadLine());
-                        saques.Insert(indexSenha, saque);
-                        saldos.Insert(indexSenha, depositos[indexSenha] - saque);
+                        saques.Insert(indexCpf, saque);
+                        saldos.Insert(indexCpf, depositos[indexCpf] - saque);
                     }
                     else
                     {
@@ -228,7 +233,7 @@ namespace Bank_Byte
                         SaqueContas(cpfs, senha, depositos, saques, saldos);
                         break;
                     case 3:
-                        DepositoContas(cpfs, senha, depositos, saldos, saques);
+                        DepositoContas(cpfs, senha, saldos, depositos, saques);
                         break;
                 }
 
@@ -281,7 +286,7 @@ namespace Bank_Byte
                         Console.ResetColor();
                         break;
                     case 1:
-                        InserirNovoUsuario(senha, titulares, cpfs, saldos);
+                        InserirNovoUsuario(senha, titulares, cpfs, saldos,depositos);
                         break;
                     case 2:
                         DeletarUsuario(senha, cpfs, titulares, saldos);
