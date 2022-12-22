@@ -12,7 +12,6 @@ namespace Bank_Byte
             int menuNewUser;
             do
             {
-
                 Console.Clear();
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("---------------------------------");
