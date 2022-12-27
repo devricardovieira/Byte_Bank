@@ -7,7 +7,7 @@ namespace Bank_Byte
 {
     class Program
     {
-        
+
         static void InserirNovoUsuario(List<string> senha, List<string> titulares, List<string> cpfs, List<double> saldos, List<double> depositos)
         {
             int menuNewUser; bool conversao = false;
@@ -19,34 +19,34 @@ namespace Bank_Byte
                 Console.WriteLine("║♦:::♦ Inserir Novo Usuário ♦:::♦║");
                 Console.WriteLine("╚════════════════════════════════╝");
                 Console.ResetColor();
-                Console.Write("Digite o nome do titular: ");
+                Console.Write("Digite o nome do usuário: ");
                 titulares.Add(Console.ReadLine());
-
-                while (!conversao)
+                Console.WriteLine("---------------------------------");
+                Console.Write("Digite o cpf do titular: ");
+                string cpf = Console.ReadLine();
+                Console.WriteLine("---------------------------------");
+                conversao = int.TryParse(cpf, out _);
+                if (!conversao)
                 {
-                    Console.Write("Digite o cpf do titular: ");
-                    string cpf = Console.ReadLine();
-                    conversao = int.TryParse(cpf, out _);
-                    
-                    if (!conversao)
-                    {
-                        Console.WriteLine();
-                        Console.ForegroundColor = ConsoleColor.White;
-                        Console.BackgroundColor = ConsoleColor.Red;
-                        Console.WriteLine("CPF INVÁLIDO !!! Por favor digite apenas números!!!! ");
-                        Console.WriteLine();
-                        Console.ResetColor();
-                    }
-                    else
-                    {
-                        cpfs.Add(cpf);
-                        Console.Write("Digite a senha: ");
-                        senha.Add(Console.ReadLine());
-                        saldos.Add(0);
-                        depositos.Add(0);
-                    }
+                    Console.WriteLine();
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.BackgroundColor = ConsoleColor.DarkRed;
+                    Console.WriteLine("CPF INVÁLIDO !!! Por favor digite apenas números!!!! ");
+                    Console.ResetColor();
                 }
-                Console.WriteLine();      
+                else
+                {
+                    cpfs.Add(cpf);
+                    Console.Write("Digite a senha: ");
+                    senha.Add(Console.ReadLine());
+                    saldos.Add(0);
+                    depositos.Add(0);
+                    Console.WriteLine();
+                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+                    Console.WriteLine("Usuário Adicionado!");
+                    Console.ResetColor();
+                }
+                Console.WriteLine();
                 Console.WriteLine("Escolha uma opção:");
                 Console.WriteLine("(1) - Inserir Novo Usuário || (2) - Voltar ao Menu Principal");
                 menuNewUser = int.Parse(Console.ReadLine());
@@ -63,16 +63,22 @@ namespace Bank_Byte
             do
             {
                 Console.Clear();
-                Console.WriteLine("___ Deletar Usuário ___ ");
-                Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.DarkCyan;
+                Console.WriteLine("╔═══════════════════════════════╗");
+                Console.WriteLine("║♦:::{♦} Deletar Usuário {♦}:::♦║");
+                Console.WriteLine("╚═══════════════════════════════╝");
+                Console.ResetColor();
 
-                Console.Write("Digite o cpf do usuário a ser deletado: ");
+                Console.Write("Digite o CPF do usuário a ser deletado: ");
                 string cpfDelet = Console.ReadLine();
                 int indexDelet = cpfs.FindIndex(x => x == cpfDelet);
 
                 if (indexDelet == -1)
                 {
-                    Console.WriteLine("Conta não encontrada.");
+                    Console.WriteLine();
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Conta não encontrada !!");
+                    Console.ResetColor();
                 }
                 else
                 {
@@ -80,17 +86,26 @@ namespace Bank_Byte
                     bool senhaDelet = senha.Contains(Console.ReadLine());
                     if (!senhaDelet)
                     {
-                        Console.WriteLine("Senha inválida!");
+                        Console.WriteLine("\nSenha inválida!");
                     }
                     else
                     {
-                        cpfs.Remove(cpfDelet);
-                        titulares.RemoveAt(indexDelet);
-                        senha.RemoveAt(indexDelet);
-                        Console.WriteLine("Conta deletada!!!");
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine("--------------------------------------------------------------------------------------");
+                        Console.WriteLine($"Nome:{titulares[indexDelet]} || CPF:{cpfs[indexDelet]} || Saldo: {saldos[indexDelet]}");
+                        Console.WriteLine("--------------------------------------------------------------------------------------");
+                        Console.ResetColor();
+                        Console.WriteLine("\nTem certeza que deseja deletar o usuário ? (1) - SIM  (2) - NÃO");
+                        int deletUser = int.Parse(Console.ReadLine());
+                        if (deletUser == 1)
+                        {
+                            cpfs.Remove(cpfDelet);
+                            titulares.RemoveAt(indexDelet);
+                            senha.RemoveAt(indexDelet);
+                            Console.WriteLine("Conta deletada!!!");
+                        }                      
                     }
                 }
-
                 Console.WriteLine("(1) Realizar nova operação || (2) Voltar ao Menu Principal");
                 menuDeletarUsuario = int.Parse(Console.ReadLine());
 
@@ -126,7 +141,7 @@ namespace Bank_Byte
 
         static void DepositoContas(List<string> cpfs, List<string> senha, List<double> saldos, List<double> depositos, List<double> saques)
         {
-            bool menuDeposito = true; 
+            bool menuDeposito = true;
             do
             {
                 Console.Clear();
@@ -135,10 +150,10 @@ namespace Bank_Byte
                 Console.WriteLine("||::::Depósito:::::||");
                 Console.WriteLine("---------------------");
                 Console.ResetColor();
-                Console.Write("Digite o cpf: "); 
+                Console.Write("Digite o cpf: ");
                 string cpfDeposito = Console.ReadLine();
                 int indexCpf = cpfs.FindIndex(x => x == cpfDeposito);
-                
+
                 if (indexCpf == -1)
                 {
                     Console.WriteLine("CPF não encontrado!");
@@ -205,7 +220,7 @@ namespace Bank_Byte
                         Console.Write("Digite o valor do Saque:");
                         double saque = double.Parse(Console.ReadLine());
                         saldos[indexCpf] = depositos[indexSenha] - saque;
-                        
+
                         if (saldos[indexCpf] <= 0)
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
@@ -220,7 +235,7 @@ namespace Bank_Byte
                             Console.WriteLine();
                             Console.WriteLine("Saque efetuado com sucesso!!!");
                             Console.ResetColor();
-                        }                    
+                        }
                     }
                     else
                     {
@@ -404,7 +419,7 @@ namespace Bank_Byte
 
         }
 
-       
+
 
         static void ShowMenu()
         {
@@ -451,7 +466,7 @@ namespace Bank_Byte
                         Console.ResetColor();
                         break;
                     case 1:
-                        InserirNovoUsuario(senha, titulares, cpfs, saldos,depositos);
+                        InserirNovoUsuario(senha, titulares, cpfs, saldos, depositos);
                         break;
                     case 2:
                         DeletarUsuario(senha, cpfs, titulares, saldos);
