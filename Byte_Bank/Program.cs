@@ -10,24 +10,43 @@ namespace Bank_Byte
         
         static void InserirNovoUsuario(List<string> senha, List<string> titulares, List<string> cpfs, List<double> saldos, List<double> depositos)
         {
-            int menuNewUser;
+            int menuNewUser; bool conversao = false;
             do
             {
                 Console.Clear();
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("---------------------------------");
-                Console.WriteLine("||::::Inserir Novo Usuário:::::||");
-                Console.WriteLine("---------------------------------");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("╔════════════════════════════════╗");
+                Console.WriteLine("║♦:::♦ Inserir Novo Usuário ♦:::♦║");
+                Console.WriteLine("╚════════════════════════════════╝");
                 Console.ResetColor();
                 Console.Write("Digite o nome do titular: ");
                 titulares.Add(Console.ReadLine());
-                Console.Write("Digite o cpf do titular: ");
-                cpfs.Add(Console.ReadLine());
-                Console.Write("Digite a senha: ");
-                senha.Add(Console.ReadLine());
-                saldos.Add(0);
-                depositos.Add(0);   
 
+                while (!conversao)
+                {
+                    Console.Write("Digite o cpf do titular: ");
+                    string cpf = Console.ReadLine();
+                    conversao = int.TryParse(cpf, out _);
+                    
+                    if (!conversao)
+                    {
+                        Console.WriteLine();
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.BackgroundColor = ConsoleColor.Red;
+                        Console.WriteLine("CPF INVÁLIDO !!! Por favor digite apenas números!!!! ");
+                        Console.WriteLine();
+                        Console.ResetColor();
+                    }
+                    else
+                    {
+                        cpfs.Add(cpf);
+                        Console.Write("Digite a senha: ");
+                        senha.Add(Console.ReadLine());
+                        saldos.Add(0);
+                        depositos.Add(0);
+                    }
+                }
+                Console.WriteLine();      
                 Console.WriteLine("Escolha uma opção:");
                 Console.WriteLine("(1) - Inserir Novo Usuário || (2) - Voltar ao Menu Principal");
                 menuNewUser = int.Parse(Console.ReadLine());
@@ -201,8 +220,7 @@ namespace Bank_Byte
                             Console.WriteLine();
                             Console.WriteLine("Saque efetuado com sucesso!!!");
                             Console.ResetColor();
-                        }
-                       
+                        }                    
                     }
                     else
                     {
@@ -284,7 +302,7 @@ namespace Bank_Byte
 
                 }
                 Console.WriteLine();
-                Console.Write("(1) Realizar nova operação || (2) Voltar ao Menu Principal");
+                Console.WriteLine("(1) Realizar nova operação || (2) Voltar ao Menu Principal");
                 int option = int.Parse(Console.ReadLine());
 
                 if (option == 2)
@@ -294,6 +312,53 @@ namespace Bank_Byte
                 }
             } while (menu);
         }
+
+        static void SaldosContas(List<string> cpfs, List<string> senha, List<double> saldos)
+        {
+            bool menuSaque = true;
+            do
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.WriteLine("---------------------");
+                Console.WriteLine("||::::::Saldo::::::||");
+                Console.WriteLine("---------------------");
+                Console.ResetColor();
+                Console.Write("Digite o cpf: ");
+                string cpfSaque = Console.ReadLine();
+                int indexCpf = cpfs.FindIndex(x => x == cpfSaque);
+
+                if (indexCpf == -1)
+                {
+                    Console.WriteLine("CPF não encontrado!");
+                }
+                else
+                {
+                    Console.Write("Digite a senha: ");
+                    string senhaSaque = Console.ReadLine();
+                    int indexSenha = senha.FindIndex(x => x == senhaSaque);
+
+                    if (indexCpf == indexSenha)
+                    {
+                        Console.Write($"Saldo: R$ {saldos[indexCpf]}");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Senha inválida!!!");
+                    }
+
+                }
+                Console.WriteLine();
+                Console.WriteLine("(1) Realizar nova operação || (2) Voltar ao Menu Principal");
+                int option = int.Parse(Console.ReadLine());
+
+                if (option == 2)
+                {
+                    menuSaque = false;
+                    return;
+                }
+            } while (menuSaque);
+        }
         static void MovimentarContas(List<string> cpfs, List<string> senha, List<double> saldos, List<double> depositos, List<double> saques)
         {
             int menuMovimentar;
@@ -301,9 +366,9 @@ namespace Bank_Byte
             {
                 Console.Clear();
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("---------------------------------");
-                Console.WriteLine("||::::Movimentar Contas:::::||");
-                Console.WriteLine("---------------------------------");
+                Console.WriteLine("||--------------------------------||");
+                Console.WriteLine("||<:::::> Movimentar Conta <:::::>||");
+                Console.WriteLine("||--------------------------------||");
                 Console.ResetColor();
 
                 Console.ResetColor();
@@ -330,19 +395,22 @@ namespace Bank_Byte
                     case 3:
                         DepositoContas(cpfs, senha, saldos, depositos, saques);
                         break;
+                    case 4:
+                        SaldosContas(cpfs, senha, saldos);
+                        break;
                 }
 
             } while (menuMovimentar != 0);
 
         }
 
-
+       
 
         static void ShowMenu()
         {
             Console.Clear();
-            Console.BackgroundColor = ConsoleColor.Gray;
-            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.BackgroundColor = ConsoleColor.DarkCyan;
+            Console.ForegroundColor = ConsoleColor.Black;
             Console.WriteLine("-------------------------------------");
             Console.WriteLine("▒▒▒▒▒▒▒▒▒▒▒▒ Byte Bank ▒▒▒▒▒▒▒▒▒▒▒▒▒▒");
             Console.WriteLine("-------------------------------------");
